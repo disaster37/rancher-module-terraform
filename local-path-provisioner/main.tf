@@ -48,7 +48,7 @@ resource "rancher2_namespace" "namespace" {
 
 
 # Create app
-resource "rancher2_app" "rook" {
+resource "rancher2_app" "app" {
     catalog_name     = "${local.project_small_id}:${rancher2_catalog.catalog.name}"
     name             = var.name
     description      = var.description
