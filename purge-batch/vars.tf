@@ -38,3 +38,8 @@ variable "labels" {
     default     = {}
     type        = map
 }
+
+variable "masters" {
+    description = "List of master nodes"
+    type        = list(string)
+}
