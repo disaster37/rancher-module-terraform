@@ -30,7 +30,7 @@ resource "rancher2_catalog" "catalog" {
   project_id = local.project_id
   refresh    = true
   version    = "helm_v3"
-  branch     = "v.0.0.17"
+  branch     = "v0.0.17"
 }
 
 # Create namespace
