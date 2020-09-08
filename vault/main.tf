@@ -10,7 +10,13 @@ terraform {
 locals {
     cluster_id               = data.rancher2_cluster.cluster.id
     project_id               = data.rancher2_project.project.id
+    namespace_id             = rancher2_namespace.namespace.id
     project_small_id         = element(regex(":(p-.*)$", data.rancher2_project.project.id), 0)
+    aws_access_key_id        = data.vault_generic_secret.vault.data["aws_access_key_id"]
+    aws_kms_seal_key_id      = data.vault_generic_secret.vault.data["aws_kms_seal_key_id"]
+    aws_region               = data.vault_generic_secret.vault.data["aws_region"]
+    aws_secret_access_key    = data.vault_generic_secret.vault.data["aws_secret_access_key"]
+    proxy                    = data.vault_generic_secret.vault.data["proxy"]  
 }
 
 data "rancher2_cluster" "cluster" {
@@ -19,6 +25,9 @@ data "rancher2_cluster" "cluster" {
 data "rancher2_project" "project" {
     cluster_id  = local.cluster_id
     name        = var.project_name
+}
+data "vault_generic_secret" "vault" {
+  path = var.vault_path
 }
 
 # Create catalog
@@ -66,6 +75,20 @@ resource "rancher2_namespace" "namespace" {
   }
 }
 
+# Secrets
+resource "rancher2_secret" "credentials" {
+  name = "vault-credentials"
+  description = "Secrets for vault"
+  project_id = local.project_id
+  namespace_id = local.namespace_id
+  data = {
+    "proxy"                    = base64encode(local.proxy)
+    "AWS_ACCESS_KEY_ID"        = base64encode(local.aws_access_key_id)
+    "AWS_SECRET_ACCESS_KEY"    = base64encode(local.aws_secret_access_key)
+    "AWS_REGION"               = base64encode(local.aws_region)
+    "VAULT_AWSKMS_SEAL_KEY_ID" = base64encode(local.aws_kms_seal_key_id)
+  }
+}
 
 # Create app
 resource "rancher2_app" "app" {

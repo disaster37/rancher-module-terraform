@@ -41,6 +41,11 @@ variable "values" {
     type        = string
 }
 
+variable "vault_path" {
+    description = "Vault path to use. If not set, vault is not used"
+    type        = string
+}
+
 variable "annotations" {
     description = "Annotations to add on application"
     default     = {}
