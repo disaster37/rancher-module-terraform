@@ -65,7 +65,7 @@ resource "rancher2_secret" "ca" {
 # Create catalog
 resource "rancher2_catalog" "catalog" {
   name       = "che"
-  url        = "https://harbor.rancher-hpd.hm.dm.ad/chartrepo/che"
+  url        = "https://harbor.rancher-prd.hm.dm.ad/chartrepo/che"
   scope      = "project"
   cluster_id = local.cluster_id
   project_id = local.project_id
