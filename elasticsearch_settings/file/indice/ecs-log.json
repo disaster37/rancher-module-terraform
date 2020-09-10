@@ -1,0 +1,7 @@
+{
+  "aliases": {
+    "ecs-log-alias": {
+      "is_write_index": true
+    }
+  }
+}

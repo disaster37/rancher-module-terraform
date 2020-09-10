@@ -1,0 +1,7 @@
+{
+  "aliases": {
+    "ecs-system-access-alias": {
+      "is_write_index": true
+    }
+  }
+}

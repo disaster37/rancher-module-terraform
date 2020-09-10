@@ -1,0 +1,10 @@
+{
+  "index_patterns": [
+    "ecs-system-raw-*"
+  ],
+  "order": 2,
+  "settings": {
+    "index.lifecycle.name": "policy_system_raw",
+    "index.lifecycle.rollover_alias": "ecs-system-raw-alias"
+  }
+}
