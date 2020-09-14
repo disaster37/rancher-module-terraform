@@ -7,8 +7,8 @@ export https_proxy=${proxy}
 export no_proxy="localhost,.hm.dm.ad"
 echo "Download binaries"
 
-curl -LO https://github.com/disaster37/elktools/releases/download/v7.5.1-3/elktools_v7.5.1-3_linux_amd64
-mv elktools_v7.5.1-3_linux_amd64 elktools
+curl -LO https://github.com/disaster37/elktools/releases/download/v7.5.1-4/elktools_v7.5.1-4_linux_amd64
+mv elktools_v7.5.1-4_linux_amd64 elktools
 chmod +x elktools
 export PATH=$PWD:$PATH
 
