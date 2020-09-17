@@ -20,7 +20,7 @@ locals {
     github_token      = data.vault_generic_secret.vault.data["github_token"]
     proxy             = data.vault_generic_secret.vault.data["proxy"]
     no_proxy          = data.vault_generic_secret.vault.data["no_proxy"]
-    ca_crt          = data.vault_generic_secret.vault.data["ca_crt"]
+    ca_crt            = data.vault_generic_secret.vault.data["ca_crt"]
 }
 
 data "vault_generic_secret" "vault" {

@@ -15,7 +15,9 @@ locals {
     ca_certs          = data.vault_generic_secret.vault.data["ca_certs"]
     ldap_user         = data.vault_generic_secret.vault.data["ldap_user"]
     ldap_password     = data.vault_generic_secret.vault.data["ldap_password"]
-    krb5_conf         = data.vault_generic_secret.vault.data["krb5_conf"]
+    github_token      = data.vault_generic_secret.vault.data["github_token"]
+    proxy             = data.vault_generic_secret.vault.data["proxy"]
+    credentials       = {for cred in var.credentials: cred => data.vault_generic_secret.vault.data[cred]}
 }
 
 data "vault_generic_secret" "vault" {
@@ -72,6 +74,8 @@ resource "rancher2_secret" "secret" {
   data         = {
     "RUNDECK_JAAS_LDAP_BINDDN"         = base64encode(local.ldap_user)
     "RUNDECK_JAAS_LDAP_BINDPASSWORD"   = base64encode(local.ldap_password)
+    "GITHUB_TOKEN"                     = base64encode(local.github_token)
+    "proxy"                            = base64encode(local.proxy)
   }
 }
 
@@ -84,13 +88,12 @@ resource "rancher2_secret" "certificates" {
   }
 }
 
-resource "rancher2_secret" "kerberos" {
-  name         = "rundeck-kerberos"
-  project_id   = local.project_id
-  namespace_id = rancher2_namespace.namespace.id
-  data         = {
-    "krb5.conf"                     = base64encode(local.krb5_conf)
-  }
+resource "rancher2_secret" "credentials" {
+    name = "rundeck-credentials"
+    description = "Credentials for rundecks"
+    project_id   = local.project_id
+    namespace_id = rancher2_namespace.namespace.id
+    data = {for k, v in local.credentials: k => base64encode(v)}
 }
 
 # Create persistant volume claim

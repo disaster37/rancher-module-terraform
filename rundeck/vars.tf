@@ -92,3 +92,9 @@ variable "pvcs" {
         size          = string
     }))
 }
+
+variable "credentials" {
+    description = "List of credentials to retrive from vault to create on secrets"
+    type        = list(string)
+    default     = []
+}
