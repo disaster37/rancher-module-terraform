@@ -4,16 +4,22 @@ terraform {
   # Live modules pin exact provider version; generic modules let consumers pin the version.
   required_providers {
     rancher2 = ">= 1.8.3"
+    vault    = ">= 2.11.0"
   }
 }
 
 locals {
     cluster_id      = data.rancher2_cluster.cluster.id
+    ca_certs        = data.vault_generic_secret.vault.data["ca_certs"]
 }
 
 # Get data
 data "rancher2_cluster" "cluster" {
     name = var.cluster_name
+}
+
+data "vault_generic_secret" "vault" {
+  path = var.vault_path
 }
 
 # Create project
@@ -60,4 +66,14 @@ resource "rancher2_project" "project" {
             
         }
     }
+}
+
+# Create secrets
+resource "rancher2_secret" "pki" {
+  name = "pki"
+  description  = "CA certificats"
+  project_id   = rancher2_project.project.id
+  data = {
+    "ca_hm.crt"  = base64encode(local.ca_certs)
+  }
 }

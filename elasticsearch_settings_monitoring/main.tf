@@ -10,13 +10,12 @@ terraform {
 }
 
 locals {
-    logstash_user            = data.vault_generic_secret.vault.data["logstash_user"]
-    logstash_password        = data.vault_generic_secret.vault.data["logstash_password"]
     elasticsearch_license    = data.vault_generic_secret.vault.data["elasticsearch_license"]
+    monitoring_user          = data.vault_generic_secret.vault.data["monitoring_user"]
+    monitoring_password      = data.vault_generic_secret.vault.data["monitoring_password"]
 }
 
 # Get data
 data "vault_generic_secret" "vault" {
   path = var.vault_path
 }
-

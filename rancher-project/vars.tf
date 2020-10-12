@@ -38,6 +38,12 @@ variable "wait_for_cluster" {
     type        = bool
 }
 
+variable "vault_path" {
+    description = "Vault path to use. If not set, vault is not used"
+    type        = string
+    default     = "secret/pki"
+}
+
 
 variable "resource_quota" {
     description = "The resource quota specification"
