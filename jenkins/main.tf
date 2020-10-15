@@ -15,6 +15,8 @@ locals {
     project_small_id = element(regex(":(p-.*)$", data.rancher2_project.project.id), 0)
     user             = data.vault_generic_secret.vault.data["user"]
     password         = data.vault_generic_secret.vault.data["password"]
+    ldap_user        = data.vault_generic_secret.vault.data["ldap_user"]
+    ldap_password    = data.vault_generic_secret.vault.data["ldap_password"]
     proxy            = data.vault_generic_secret.vault.data["proxy"]
     no_proxy         = data.vault_generic_secret.vault.data["no_proxy"]
     docker_server    = data.vault_generic_secret.vault.data["docker_server"]
@@ -47,6 +49,8 @@ resource "rancher2_secret" "credentials" {
   data = {
     "jenkins-admin-user"     = base64encode(local.user)
     "jenkins-admin-password" = base64encode(local.password)
+    "LDAP_USER"              = base64encode(local.ldap_user)
+    "LDAP_PASSWORD"          = base64encode(local.ldap_password)
   }
 }
 
