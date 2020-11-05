@@ -84,3 +84,12 @@ variable "container_resource_limit" {
         requests_memory = string
     })
 }
+
+variable "certificates" {
+    description = "List of certificates to retrive from vault"
+    type        = map(object({
+        certs = string
+        key   = string
+    }))
+    default     = {}
+}

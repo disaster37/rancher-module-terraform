@@ -15,6 +15,10 @@ locals {
     namespace_id             = rancher2_namespace.namespace.id
     kibana_password          = data.vault_generic_secret.vault.data["kibana_password"]
     kibana_encryption_key    = data.vault_generic_secret.vault.data["kibana_encryption_key"]
+    certificates             = { for name, cert in var.certificates: name => {
+                                 certs = data.vault_generic_secret.vault.data[cert.certs]
+                                 key   = data.vault_generic_secret.vault.data[cert.key]
+                                }}
 }
 
 # Get data
@@ -74,6 +78,18 @@ resource "rancher2_secret" "credentials" {
         ELASTICSEARCH_PASSWORD            = base64encode(local.kibana_password)
         KIBANA_ENCRYPTION_KEY             = base64encode(local.kibana_encryption_key)
     }
+}
+
+
+
+resource "rancher2_certificate" "certificates" {
+    for_each = local.certificates
+    name = "certificate-${each.key}"
+    description = "Certificates for Kibana"
+    project_id   = local.project_id
+    namespace_id = local.namespace_id
+    certs = base64encode(each.value["certs"])
+    key   = base64encode(each.value["key"])
 }
 
 # Create Elasticsearch with all roles
