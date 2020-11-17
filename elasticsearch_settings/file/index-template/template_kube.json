@@ -1,0 +1,10 @@
+{
+  "index_patterns": [
+    "kube-*"
+  ],
+  "order": 2,
+  "settings": {
+    "index.lifecycle.name": "policy_kube",
+    "index.lifecycle.rollover_alias": "kube-alias"
+  }
+}

@@ -198,6 +198,11 @@ resource elasticsearch_index_template "log" {
     template    = file("file/index-template/template_log.json")
 }
 
+resource elasticsearch_index_template "kube" {
+    name        = "template_kube"
+    template    = file("file/index-template/template_kube.json")
+}
+
 resource elasticsearch_index_template "system_raw" {
     name        = "template_system_raw"
     template    = file("file/index-template/template_system_raw.json")

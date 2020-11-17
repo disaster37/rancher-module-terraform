@@ -39,3 +39,4 @@ resource kibana_object "index_pattern_ecs" {
 
 
 
+
