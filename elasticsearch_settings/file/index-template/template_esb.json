@@ -5,6 +5,7 @@
   "order": 2,
   "settings": {
     "index.lifecycle.name": "policy_esb",
-    "index.lifecycle.rollover_alias": "ecs-esb-alias"
+    "index.lifecycle.rollover_alias": "ecs-esb-alias",
+    "index.routing.allocation.require.data": "hot"
   }
 }

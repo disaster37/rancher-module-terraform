@@ -5,6 +5,7 @@
   "order": 2,
   "settings": {
     "index.lifecycle.name": "policy_backup",
-    "index.lifecycle.rollover_alias": "ecs-backup-alias"
+    "index.lifecycle.rollover_alias": "ecs-backup-alias",
+    "index.routing.allocation.require.data": "hot"
   }
 }

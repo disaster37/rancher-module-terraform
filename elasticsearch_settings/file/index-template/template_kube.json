@@ -5,6 +5,7 @@
   "order": 2,
   "settings": {
     "index.lifecycle.name": "policy_kube",
-    "index.lifecycle.rollover_alias": "kube-alias"
+    "index.lifecycle.rollover_alias": "kube-alias",
+    "index.routing.allocation.require.data": "hot"
   }
 }

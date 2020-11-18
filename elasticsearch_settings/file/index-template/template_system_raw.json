@@ -5,6 +5,7 @@
   "order": 2,
   "settings": {
     "index.lifecycle.name": "policy_system_raw",
-    "index.lifecycle.rollover_alias": "ecs-system-raw-alias"
+    "index.lifecycle.rollover_alias": "ecs-system-raw-alias",
+    "index.routing.allocation.require.data": "hot"
   }
 }
