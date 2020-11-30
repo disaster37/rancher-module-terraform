@@ -10,7 +10,10 @@ locals {
     namespace_id             = rancher2_namespace.namespace.id
     credentials              = {for cred in var.credentials: upper(cred) => data.vault_generic_secret.vault[0].data[cred]}
     secret_files             = {for cred in var.secret_files: cred => data.vault_generic_secret.vault[0].data[cred]}
-    certificates             = merge({for cert in var.certificates: cert => data.vault_generic_secret.vault[0].data[cert]}, {for cert in var.global_certificates: cert => data.vault_generic_secret.vault_global[0].data[cert]})
+    certificates             = {for cert, value in var.certificates: cert => {
+                                    cert = data.vault_generic_secret.vault[0].data[value.cert_key]
+                                    key  = data.vault_generic_secret.vault[0].data[value.key_key]
+                                }}
     catalog_name             = var.catalog == null ? var.is_project_catalog == true ? "${local.project_small_id}:${var.catalog_name}" : var.catalog_name : "${local.project_small_id}:${rancher2_catalog.catalog[0].name}"
     values                   = var.is_substitute_values == true ? templatefile(var.values_path, local.credentials) : file(var.values_path)
 }
@@ -75,13 +78,14 @@ resource "rancher2_secret" "credentials" {
     namespace_id = local.namespace_id
     data         = {for k, v in local.credentials: k => base64encode(v)}
 }
-resource "rancher2_secret" "certificates" {
-    count        = length(local.certificates) > 0 ? 1 : 0
-    name         = "${var.name}-certificates"
+resource "rancher2_certificate" "certificates" {
+    for_each     = local.certificates
+    name         = "${each.name}-certificates"
     description  = "Certificates"
     project_id   = local.project_id
     namespace_id = local.namespace_id
-    data         = {for k, v in local.certificates: k => base64encode(v)}
+    certs        = base64encode(each.value.cert)
+    key          = base64encode(each.value.key)
 }
 resource "rancher2_secret" "secret_files" {
     count        = length(local.secret_files) > 0 ? 1 : 0

@@ -91,8 +91,11 @@ variable "container_resource_limit" {
 
 variable "certificates" {
     description = "List of certificates to retrive from vault"
-    type        = list(string)
-    default     = []
+    type        = map(object({
+        cert_key = string
+        key_key  = string
+    }))
+    default     = {}
 }
 
 variable "global_certificates" {
