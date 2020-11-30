@@ -1,11 +1,6 @@
 terraform {
-  required_version = ">= 0.12.17"
+  required_version = ">= 0.13.0"
 
-  # Live modules pin exact provider version; generic modules let consumers pin the version.
-  required_providers {
-    rancher2 = ">= 1.8.3"
-    vault    = ">= 2.11.0"
-  }
 }
 
 locals {
@@ -20,6 +15,12 @@ data "rancher2_cluster" "cluster" {
 
 data "vault_generic_secret" "vault" {
   path = var.vault_path
+}
+
+data "rancher2_role_template" "rt" {
+    for_each = var.roles
+    context  = "project"
+    name     = each.value.template
 }
 
 # Create project
@@ -76,4 +77,14 @@ resource "rancher2_secret" "pki" {
   data = {
     "ca_hm.crt"  = base64encode(local.ca_certs)
   }
+}
+
+# Affect roles
+resource "rancher2_project_role_template_binding" "rtb" {
+    for_each           = var.roles
+    name               = each.key
+    project_id         = rancher2_project.project.id
+    role_template_id   = data.rancher2_role_template.rt[each.key].id
+    user_principal_id  = each.value.user_id
+    group_principal_id = each.value.group_id
 }

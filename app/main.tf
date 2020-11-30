@@ -1,11 +1,6 @@
 terraform {
   required_version = ">= 0.12.0"
 
-  # Live modules pin exact provider version; generic modules let consumers pin the version.
-  required_providers {
-    rancher2 = ">= 1.8.3"
-    vault    = ">= 2.11.0"
-  }
 }
 
 locals {
@@ -112,7 +107,7 @@ resource "rancher2_app" "app" {
     annotations      = var.annotations
     labels           = var.labels
     values_yaml      = base64encode(local.values)
-    force_upgrade    = true
+    force_upgrade    = var.force_upgrade
 
     depends_on = [rancher2_namespace.namespace]
 }

@@ -75,3 +75,15 @@ variable "container_resource_limit" {
         requests_memory = string
     })
 }
+
+variable "with_snapshot_pvc" {
+    description = "Auto create PVC for snapshot"
+    type        = bool
+    default     = true
+}
+
+variable "force_upgrade" {
+    description = "Force helm upgrade"
+    type        = bool
+    default     = false
+}

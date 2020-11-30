@@ -1,12 +1,6 @@
 terraform {
   required_version = ">= 0.12.0"
 
-  # Live modules pin exact provider version; generic modules let consumers pin the version.
-  required_providers {
-    rancher2   = ">= 1.8.3"
-    vault      = ">= 2.11.0"
-    kubernetes = ">= 1.11.3"
-  }
 }
 
 locals {
@@ -70,16 +64,11 @@ resource "rancher2_namespace" "namespace" {
             }
         }
     }
-  
-  #lifecycle {
-  #  ignore_changes = [
-  #    resource_quota
-  #  ]
-  #}
 }
 
 # Create persistant volume claim for backup
 resource "kubernetes_persistent_volume_claim" "backup" {
+  count            = var.with_snapshot_pvc == true ? 1 : 0
   wait_until_bound = true
   metadata {
     name = "pvc-elasticsearch-snapshot"
@@ -249,5 +238,6 @@ resource "rancher2_app" "elasticsearch" {
     values_yaml      = each.value["values"]
     annotations      = var.annotations
     labels           = var.labels
-    depends_on       = [rancher2_namespace.namespace, rancher2_secret.credentials, kubernetes_persistent_volume_claim.backup, kubernetes_job.job]
+    force_upgrade    = var.force_upgrade
+    depends_on       = [rancher2_namespace.namespace, rancher2_secret.credentials, kubernetes_job.job]
 }

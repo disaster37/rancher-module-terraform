@@ -128,3 +128,9 @@ variable "is_substitute_values" {
     type        = bool
     default     = false
 }
+
+variable "force_upgrade" {
+    description = "Force helm upgrade"
+    type        = bool
+    default     = false
+}

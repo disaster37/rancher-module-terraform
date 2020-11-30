@@ -1,10 +1,6 @@
 terraform {
   required_version = ">= 0.12.0"
 
-  # Live modules pin exact provider version; generic modules let consumers pin the version.
-  required_providers {
-    rancher2   = ">= 1.8.3"
-  }
 }
 
 locals {

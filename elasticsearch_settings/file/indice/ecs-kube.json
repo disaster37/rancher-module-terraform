@@ -1,7 +1,0 @@
-{
-  "aliases": {
-    "kube-alias": {
-      "is_write_index": true
-    }
-  }
-}

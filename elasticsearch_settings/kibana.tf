@@ -1,40 +1,40 @@
 # Create spaces
-resource kibana_user_space "old" {
-    name = "old"
-    description = "Display old data and old dashboard"
-    disabled_features = [
-        "maps",
-        "graph",
-        "monitoring",
-        "ml",
-        "apm",
-        "infrastructure",
-        "logs",
-        "siem",
-        "uptime"
-    ]
+resource kibana_user_space "us" {
+    for_each          = var.user_spaces
+    name              = each.key
+    description       = each.value.description
+    disabled_features = each.value.features
 }
 
 # Create roles
-resource kibana_role "default" {
-  name = "default"
-  kibana {
-    base    = ["read"]
-    spaces  = ["default", kibana_user_space.old.name]
-  }
+resource kibana_role "role" {
+    for_each = var.kibana_roles
+    name     = each.key
+    dynamic "kibana" {
+        for_each = each.value.kibana[*]
+        content {
+            base   = kibana.value.base
+            spaces = kibana.value.spaces
+        }
+    }
+    depends_on = [ kibana_user_space.us ]
 }
 
 
 # Create index patterns
-resource kibana_object "index_pattern_ecs" {
-  name            = "index_pattern_ecs"
-  data            = file("file/index-pattern/ecs.ndjson")
-  space           = "default"
-  deep_reference	= "true"
-  export_objects {
-	  id    = "ecs-*"
-	  type  = "index-pattern"
-  }
+resource kibana_object "object" {
+    for_each        = var.kibana_objects
+    name            = each.key
+    data            = each.value.data
+    space           = each.value.space
+    deep_reference	= each.value.deep_reference
+    dynamic "export_objects" {
+        for_each = each.value.export_objects[*]
+        content {
+            id   = export_objects.value.id
+            type = export_objects.value.type
+        }
+    }
 }
 
 

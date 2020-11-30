@@ -72,3 +72,13 @@ variable "container_resource_limit" {
         requests_memory = string
     })
 }
+
+variable "roles" {
+    description = "The roles to affect on project"
+    type        = map(object({
+        template = string
+        user_id     = string
+        group_id    = string
+    }))
+    default     = {}
+}
