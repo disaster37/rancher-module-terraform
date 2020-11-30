@@ -14,6 +14,11 @@ locals {
                                     cert = data.vault_generic_secret.vault[0].data[value.cert_key]
                                     key  = data.vault_generic_secret.vault[0].data[value.key_key]
                                 }}
+    registries               = {for reg, value in var.registries: reg => {
+                                    address  = data.vault_generic_secret.vault[0].data[value.address_key]
+                                    username = data.vault_generic_secret.vault[0].data[value.username_key]
+                                    password = data.vault_generic_secret.vault[0].data[value.password_key]
+                                }}
     catalog_name             = var.catalog == null ? var.is_project_catalog == true ? "${local.project_small_id}:${var.catalog_name}" : var.catalog_name : "${local.project_small_id}:${rancher2_catalog.catalog[0].name}"
     values                   = var.is_substitute_values == true ? templatefile(var.values_path, local.credentials) : file(var.values_path)
 }
@@ -94,6 +99,18 @@ resource "rancher2_secret" "secret_files" {
     project_id   = local.project_id
     namespace_id = local.namespace_id
     data         = {for k, v in local.secret_files: k => base64encode(v)}
+}
+resource "rancher2_registry" "registry" {
+    for_each = local.registries
+    name = each.key
+    description = "Secret to connect on registry"
+    project_id = local.project_id
+    namespace_id = local.namespace_id
+    registries {
+        address  = each.value.address
+        username = each.value.username
+        password = each.value.password
+    }
 }
 
 # Create catalog

@@ -143,3 +143,13 @@ variable "force_upgrade" {
     type        = bool
     default     = false
 }
+
+variable "registries" {
+    description = "Registries"
+    type        = map(object({
+        address_key  = string
+        username_key = string
+        password_key = string
+    }))
+    default     = {}
+}
