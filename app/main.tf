@@ -80,7 +80,7 @@ resource "rancher2_secret" "credentials" {
 }
 resource "rancher2_certificate" "certificates" {
     for_each     = local.certificates
-    name         = "${each.name}-certificates"
+    name         = "${each.key}-certificates"
     description  = "Certificates"
     project_id   = local.project_id
     namespace_id = local.namespace_id
