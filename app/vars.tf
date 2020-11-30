@@ -107,6 +107,12 @@ variable "credentials" {
     default     = []
 }
 
+variable "secret_files" {
+    description = "List of secret files to retrive from vault"
+    type        = list(string)
+    default     = []
+}
+
 variable "catalog" {
     description = "Catalog to create"
     type = object({

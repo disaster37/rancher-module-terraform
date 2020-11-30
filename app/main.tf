@@ -9,6 +9,7 @@ locals {
     project_small_id         = element(regex(":(p-.*)$", data.rancher2_project.project.id), 0)
     namespace_id             = rancher2_namespace.namespace.id
     credentials              = {for cred in var.credentials: upper(cred) => data.vault_generic_secret.vault[0].data[cred]}
+    secret_files             = {for cred in var.secret_files: cred => data.vault_generic_secret.vault[0].data[cred]}
     certificates             = merge({for cert in var.certificates: cert => data.vault_generic_secret.vault[0].data[cert]}, {for cert in var.global_certificates: cert => data.vault_generic_secret.vault_global[0].data[cert]})
     catalog_name             = var.catalog == null ? var.is_project_catalog == true ? "${local.project_small_id}:${var.catalog_name}" : var.catalog_name : "${local.project_small_id}:${rancher2_catalog.catalog[0].name}"
     values                   = var.is_substitute_values == true ? templatefile(var.values_path, local.credentials) : file(var.values_path)
@@ -81,6 +82,14 @@ resource "rancher2_secret" "certificates" {
     project_id   = local.project_id
     namespace_id = local.namespace_id
     data         = {for k, v in local.certificates: k => base64encode(v)}
+}
+resource "rancher2_secret" "secret_files" {
+    count        = length(local.secret_files) > 0 ? 1 : 0
+    name         = "${var.name}-secrets"
+    description  = "Secret files"
+    project_id   = local.project_id
+    namespace_id = local.namespace_id
+    data         = {for k, v in local.secret_files: k => base64encode(v)}
 }
 
 # Create catalog
