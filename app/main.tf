@@ -8,7 +8,7 @@ locals {
     project_id               = data.rancher2_project.project.id
     project_small_id         = element(regex(":(p-.*)$", data.rancher2_project.project.id), 0)
     namespace_id             = rancher2_namespace.namespace.id
-    credentials              = {for cred in var.credentials: upper(cred) => data.vault_generic_secret.vault[0].data[cred]}
+    credentials              = {for cred in var.credentials: cred => data.vault_generic_secret.vault[0].data[cred]}
     secret_files             = {for cred in var.secret_files: cred => data.vault_generic_secret.vault[0].data[cred]}
     certificates             = {for cert, value in var.certificates: cert => {
                                     cert = data.vault_generic_secret.vault[0].data[value.cert_key]
