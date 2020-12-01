@@ -125,6 +125,27 @@ resource "rancher2_catalog" "catalog" {
   version    = var.catalog.version
 }
 
+# Create PVC
+# Create persistant volume claim
+resource "kubernetes_persistent_volume_claim" "pvc" {
+  for_each = var.pvcs
+  wait_until_bound = true
+  metadata {
+    name = each.key
+    namespace = var.namespace
+  }
+  spec {
+    access_modes = [each.value.access_mode]
+    storage_class_name = each.value.storage_class
+    resources {
+      requests = {
+        storage = each.value.size
+      }
+    }
+  }
+  depends_on = [rancher2_namespace.namespace]
+}
+
 # Create Elasticsearch with all roles
 resource "rancher2_app" "app" {
     catalog_name     = local.catalog_name

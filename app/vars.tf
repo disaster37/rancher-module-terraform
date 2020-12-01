@@ -153,3 +153,13 @@ variable "registries" {
     }))
     default     = {}
 }
+
+variable "pvcs" {
+    description = "Additionnals PVC"
+    type        = map(object({
+        storage_class = string
+        access_mode   = string
+        size          = string
+    }))
+    default     = {}
+}
