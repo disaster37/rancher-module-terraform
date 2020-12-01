@@ -55,7 +55,7 @@ resource elasticsearch_license "license" {
 resource elasticsearch_index_lifecycle_policy "ilm" {
     for_each = var.ilm_policies
     name    = each.key
-    policy  = each.value
+    policy  = file(each.value)
 }
 
 ########
@@ -64,7 +64,7 @@ resource elasticsearch_index_lifecycle_policy "ilm" {
 resource elasticsearch_index_template "it" {
     for_each    = var.index_template
     name        = each.key
-    template    = each.value
+    template    = file(each.value)
 }
 
 
@@ -84,5 +84,6 @@ resource elasticsearch_snapshot_lifecycle_policy "slp" {
     schedule 		= each.value.schedule
     repository      = each.value.repository
     configs         = each.value.settings
+    retention       = each.value.retention
     depends_on = [ elasticsearch_snapshot_repository.sr ]
 }

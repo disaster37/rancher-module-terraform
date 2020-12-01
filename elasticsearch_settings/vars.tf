@@ -72,9 +72,10 @@ variable "slm_policies" {
     description = "The slm policies"
     type        = map(object({
         name       = string
-        scheduler  = string
+        schedule  = string
         repository = string
         settings   = string
+        retention  = string
     }))
     default = {}
 }
@@ -83,7 +84,7 @@ variable "user_spaces" {
     description = "Users spaces on Kibana"
     type        = map(object({
         description = string
-        features    = list(string)    
+        disabled_features    = list(string)    
     }))
     default = {}
 }
@@ -92,7 +93,7 @@ variable "kibana_roles" {
     description = "Kibana roles"
     type        = map(object({
         kibana  = list(object({
-            base   = string
+            base   = list(string)
             spaces = list(string)
         }))     
     }))

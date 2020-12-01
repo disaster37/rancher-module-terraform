@@ -3,7 +3,7 @@ resource kibana_user_space "us" {
     for_each          = var.user_spaces
     name              = each.key
     description       = each.value.description
-    disabled_features = each.value.features
+    disabled_features = each.value.disabled_features
 }
 
 # Create roles
@@ -25,7 +25,7 @@ resource kibana_role "role" {
 resource kibana_object "object" {
     for_each        = var.kibana_objects
     name            = each.key
-    data            = each.value.data
+    data            = file(each.value.data)
     space           = each.value.space
     deep_reference	= each.value.deep_reference
     dynamic "export_objects" {

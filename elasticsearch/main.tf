@@ -15,7 +15,8 @@ locals {
     ldap_password            = data.vault_generic_secret.vault.data["ldap_password"]
     monitoring_user          = data.vault_generic_secret.vault.data["monitoring_user"]
     monitoring_password      = data.vault_generic_secret.vault.data["monitoring_password"]
-    kibana_password          = data.vault_generic_secret.vault.data["kibana_password"]
+    kibana_password          = data.vault_generic_secret.vault.data["KIBANA_PASSWORD"]
+    kibana_username          = data.vault_generic_secret.vault.data["KIBANA_USERNAME"]
     logstash_system_password = data.vault_generic_secret.vault.data["logstash_system_password"]
     proxy                    = data.vault_generic_secret.vault.data["proxy"]
 }
@@ -218,6 +219,7 @@ resource "rancher2_secret" "credentials" {
         ELASTICSEARCH_MONITORING_USER     = base64encode(local.monitoring_user)
         ELASTICSEARCH_MONITORING_PASSWORD = base64encode(local.monitoring_password)
         KIBANA_PASSWORD                   = base64encode(local.kibana_password)
+        KIBANA_USERNAME                   = base64encode(local.kibana_username)
         LOGSTASH_SYSTEM_PASSWORD          = base64encode(local.logstash_system_password)
         proxy                             = base64encode(local.proxy)
         ELASTIC_URL                       = base64encode(local.elastic_url)
