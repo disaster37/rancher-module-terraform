@@ -1,9 +1,0 @@
-{
-  "index_patterns": [
-    ".watcher-history-*"
-  ],
-  "order": 1,
-  "settings": {
-    "index.lifecycle.name": "policy_socle"
-  }
-}

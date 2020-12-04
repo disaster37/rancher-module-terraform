@@ -17,7 +17,7 @@ locals {
     monitoring_password      = data.vault_generic_secret.vault.data["monitoring_password"]
     kibana_password          = data.vault_generic_secret.vault.data["KIBANA_PASSWORD"]
     kibana_username          = data.vault_generic_secret.vault.data["KIBANA_USERNAME"]
-    logstash_system_password = data.vault_generic_secret.vault.data["logstash_system_password"]
+    logstash_system_password = data.vault_generic_secret.vault.data["LOGSTASH_SYSTEM_PASSWORD"]
     proxy                    = data.vault_generic_secret.vault.data["proxy"]
 }
 
