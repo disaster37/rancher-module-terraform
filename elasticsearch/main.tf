@@ -19,6 +19,7 @@ locals {
     kibana_username          = data.vault_generic_secret.vault.data["KIBANA_USERNAME"]
     logstash_system_password = data.vault_generic_secret.vault.data["LOGSTASH_SYSTEM_PASSWORD"]
     proxy                    = data.vault_generic_secret.vault.data["proxy"]
+    keystore                 = {for cred in var.keystore: cred => data.vault_generic_secret.vault.data[cred]}
 }
 
 # Get data
@@ -212,20 +213,27 @@ resource "rancher2_secret" "credentials" {
     project_id   = local.project_id
     namespace_id = local.namespace_id
     data = {
-        ELASTIC_USERNAME                  = base64encode("elastic")
-        ELASTIC_PASSWORD                  = base64encode(local.elastic_password)
-        ELASTICSEARCH_LDAP_USER           = base64encode(local.ldap_user)
-        ELASTICSEARCH_LDAP_PASSWORD       = base64encode(local.ldap_password)
-        ELASTICSEARCH_MONITORING_USER     = base64encode(local.monitoring_user)
-        ELASTICSEARCH_MONITORING_PASSWORD = base64encode(local.monitoring_password)
-        KIBANA_PASSWORD                   = base64encode(local.kibana_password)
-        KIBANA_USERNAME                   = base64encode(local.kibana_username)
-        LOGSTASH_SYSTEM_PASSWORD          = base64encode(local.logstash_system_password)
-        proxy                             = base64encode(local.proxy)
-        ELASTIC_URL                       = base64encode(local.elastic_url)
+        ELASTIC_USERNAME                                                                     = base64encode("elastic")
+        ELASTIC_PASSWORD                                                                     = base64encode(local.elastic_password)
+        ELASTICSEARCH_LDAP_USER                                                              = base64encode(local.ldap_user)
+        ELASTICSEARCH_MONITORING_USER                                                        = base64encode(local.monitoring_user)
+        ELASTICSEARCH_MONITORING_PASSWORD                                                    = base64encode(local.monitoring_password)
+        KIBANA_PASSWORD                                                                      = base64encode(local.kibana_password)
+        KIBANA_USERNAME                                                                      = base64encode(local.kibana_username)
+        LOGSTASH_SYSTEM_PASSWORD                                                             = base64encode(local.logstash_system_password)
+        proxy                                                                                = base64encode(local.proxy)
+        ELASTIC_URL                                                                          = base64encode(local.elastic_url)
     }
 }
 
+resource "rancher2_secret" "keystore" {
+    count        = length(local.keystore) > 0 ? 1 : 0
+    name         = "elasticsearch-keystore"
+    description  = "Keystore"
+    project_id   = local.project_id
+    namespace_id = local.namespace_id
+    data         = {for k, v in local.keystore: k => base64encode(v)}
+}
 
 # Create Elasticsearch with all roles
 resource "rancher2_app" "elasticsearch" {
@@ -241,5 +249,5 @@ resource "rancher2_app" "elasticsearch" {
     annotations      = var.annotations
     labels           = var.labels
     force_upgrade    = var.force_upgrade
-    depends_on       = [rancher2_namespace.namespace, rancher2_secret.credentials, kubernetes_job.job]
+    depends_on       = [rancher2_namespace.namespace, rancher2_secret.credentials, rancher2_secret.keystore, kubernetes_job.job]
 }

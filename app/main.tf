@@ -10,6 +10,12 @@ locals {
     namespace_id             = rancher2_namespace.namespace.id
     credentials              = {for cred in var.credentials: cred => data.vault_generic_secret.vault[0].data[cred]}
     secret_files             = {for cred in var.secret_files: cred => data.vault_generic_secret.vault[0].data[cred]}
+    custom_secret_files      = {for name, secret in var.custom_secret_files: name => {
+                                    description = secret.description
+                                    labels      = secret.labels
+                                    annotations = secret.annotations
+                                    secrets     = {for cred in secret.keys : cred => data.vault_generic_secret.vault[0].data[cred]}
+                                }}
     certificates             = {for cert, value in var.certificates: cert => {
                                     cert = data.vault_generic_secret.vault[0].data[value.cert_key]
                                     key  = data.vault_generic_secret.vault[0].data[value.key_key]
@@ -99,6 +105,16 @@ resource "rancher2_secret" "secret_files" {
     project_id   = local.project_id
     namespace_id = local.namespace_id
     data         = {for k, v in local.secret_files: k => base64encode(v)}
+}
+resource "rancher2_secret" "custom_secret_files" {
+    for_each     = local.custom_secret_files
+    name         = each.key
+    description  = each.value.description
+    annotations  = each.value.annotations
+    labels       = each.value.labels
+    project_id   = local.project_id
+    namespace_id = local.namespace_id
+    data         = {for k, v in each.value.secrets: k => base64encode(v)}
 }
 resource "rancher2_registry" "registry" {
     for_each = local.registries

@@ -98,11 +98,6 @@ variable "certificates" {
     default     = {}
 }
 
-variable "global_certificates" {
-    description = "List of certificates to retrive from vault"
-    type        = list(string)
-    default     = []
-}
 
 variable "credentials" {
     description = "List of credentials to retrive from vault"
@@ -114,6 +109,17 @@ variable "secret_files" {
     description = "List of secret files to retrive from vault"
     type        = list(string)
     default     = []
+}
+
+variable "custom_secret_files" {
+    description = "List of custom secret files to retrive from vault"
+    type        = map(object({
+        keys        = list(string)
+        description = string
+        annotations = map(string)
+        labels      = map(string)
+    }))
+    default     = {}
 }
 
 variable "catalog" {

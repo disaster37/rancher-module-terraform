@@ -87,3 +87,9 @@ variable "force_upgrade" {
     type        = bool
     default     = false
 }
+
+variable "keystore" {
+    description = "Key to add on secret keystore"
+    type        = list(string)
+    default     = []
+}
