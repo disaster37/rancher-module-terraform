@@ -154,7 +154,7 @@ resource "kubernetes_job" "job" {
       }
       spec {
         container {
-          args    = list(file("script.sh"))
+          args    = [file("script.sh")]
           command = [
             "/bin/sh",
             "-c",
@@ -216,6 +216,7 @@ resource "rancher2_secret" "credentials" {
         ELASTIC_USERNAME                                                                     = base64encode("elastic")
         ELASTIC_PASSWORD                                                                     = base64encode(local.elastic_password)
         ELASTICSEARCH_LDAP_USER                                                              = base64encode(local.ldap_user)
+        ELASTICSEARCH_LDAP_PASSWORD                                                          = base64encode(local.ldap_password)
         ELASTICSEARCH_MONITORING_USER                                                        = base64encode(local.monitoring_user)
         ELASTICSEARCH_MONITORING_PASSWORD                                                    = base64encode(local.monitoring_password)
         KIBANA_PASSWORD                                                                      = base64encode(local.kibana_password)
