@@ -64,7 +64,7 @@ resource elasticsearch_index_lifecycle_policy "ilm" {
 resource elasticsearch_index_template "it" {
     for_each    = var.index_template
     name        = each.key
-    template    = file(each.value)
+    template    = jsondecode(jsonencode(file(each.value)))
 }
 
 

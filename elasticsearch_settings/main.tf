@@ -4,7 +4,7 @@ terraform {
 }
 
 locals {  
-    users       = {for user in var.users:  data.vault_generic_secret.vault[0].data[user.user_key] => {
+    users       = {for user in var.users:  nonsensitive(data.vault_generic_secret.vault[0].data[user.user_key]) => {
         password = data.vault_generic_secret.vault[0].data[user.password_key]
         roles    = user.roles
     }}
