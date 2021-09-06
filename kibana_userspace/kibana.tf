@@ -1,7 +1,7 @@
 # Create user space
 resource "kibana_user_space" "user_space" {
     for_each = var.spaces
-    name              = each.key
+    uid              = each.key
     description       = each.value.description
     disabled_features = each.value.disabled_features
 }
@@ -12,7 +12,7 @@ resource "kibana_role" "write" {
     name     = "space_${replace(each.key, "/[ \\-]/", "_")}_write"
     kibana {
         base    = ["all"]
-        spaces  = [kibana_user_space.user_space[each.key].name]
+        spaces  = [kibana_user_space.user_space[each.key].uid]
     }
 }
 
@@ -22,7 +22,7 @@ resource "kibana_role" "read" {
   name      = "space_${replace(each.key, "/[ \\-]/", "_")}_read"
   kibana {
     base    = ["read"]
-    spaces  = [kibana_user_space.user_space[each.key].name]
+    spaces  = [kibana_user_space.user_space[each.key].uid]
   }
 }
 
@@ -31,7 +31,7 @@ resource kibana_copy_object "copy" {
     for_each      = var.spaces
     name          = "copy_object_${each.key}"
     source_space  = each.value.source_space
-    target_spaces = [kibana_user_space.user_space[each.key].name]
+    target_spaces = [kibana_user_space.user_space[each.key].uid]
 
     dynamic "object" {
         for_each = each.value.copy_objects[*]
