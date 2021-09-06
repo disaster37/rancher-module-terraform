@@ -40,6 +40,7 @@ resource kibana_copy_object "copy" {
             type    = object.value["type"]
         }
     }
-
-    force_update = true
+    overwrite         = true
+    create_new_copies = false
+    force_update      = true
 }
