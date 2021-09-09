@@ -2,6 +2,7 @@
 resource "kibana_user_space" "user_space" {
     for_each = var.spaces
     uid              = each.key
+    name             = each.key
     description       = each.value.description
     disabled_features = each.value.disabled_features
 }

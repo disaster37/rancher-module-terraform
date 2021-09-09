@@ -1,7 +1,8 @@
 # Create spaces
 resource kibana_user_space "us" {
     for_each          = var.user_spaces
-    name              = each.key
+    uid              = each.key
+    name             = each.key
     description       = each.value.description
     disabled_features = each.value.disabled_features
 }
