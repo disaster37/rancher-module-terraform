@@ -5,9 +5,9 @@ terraform {
 
 locals {
     cluster_id               = data.rancher2_cluster.cluster.id
-    project_id               = data.rancher2_project.project.id
-    project_small_id         = element(regex(":(p-.*)$", data.rancher2_project.project.id), 0)
-    namespace_id             = rancher2_namespace.namespace.id
+    project_id               = var.project_name == "" ? null : data.rancher2_project.project[0].id
+    project_small_id         = var.project_name == "" ? null : element(regex(":(p-.*)$", data.rancher2_project.project[0].id), 0)
+    namespace_id             = var.namespace == "" ? null : rancher2_namespace.namespace[0].id
     credentials              = {for cred in var.credentials: cred => data.vault_generic_secret.vault[0].data[cred]}
     secret_files             = {for cred in var.secret_files: cred => data.vault_generic_secret.vault[0].data[cred]}
     custom_secret_files      = {for name, secret in var.custom_secret_files: name => {
@@ -45,12 +45,14 @@ data "rancher2_cluster" "cluster" {
     name = var.cluster_name
 }
 data "rancher2_project" "project" {
+    count = var.project_name == "" ? 0 : 1
     cluster_id  = local.cluster_id
     name        = var.project_name
 }
 
 # Create namespace
 resource "rancher2_namespace" "namespace" {
+  count = var.namespace == "" ? 0 : 1
   name                     = var.namespace
   project_id               = local.project_id
   labels                   = {
@@ -147,15 +149,11 @@ resource "kubernetes_config_map" "configmaps" {
 }
 
 # Create catalog
-resource "rancher2_catalog" "catalog" {
-  count      = var.catalog == null ? 0 : 1
-  name       = var.catalog.name
-  url        = var.catalog.url
-  scope      = "project"
+resource "rancher2_catalog_v2" "catalog" {
+  for_each   = var.catalogs
+  name       = each.key
+  url        = each.value.url
   cluster_id = local.cluster_id
-  project_id = local.project_id
-  refresh    = true
-  version    = var.catalog.version
 }
 
 # Create PVC

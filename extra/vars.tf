@@ -1,21 +1,25 @@
 variable "name" {
     description = "The name to prefix resources"
     type        = string
+    default     = ""
 }
 
 variable "cluster_name" {
     description = "Cluster name where to deploy"
     type        = string
+    default     = ""
 }
 
 variable "project_name" {
     description = "Project name where to deploy"
     type        = string
+    default     = ""
 }
 
 variable "namespace" {
     description = "Namespace where to deploy"
     type        = string
+    default     = ""
 }
 
 
@@ -41,6 +45,7 @@ variable "resource_quota" {
             requests_storage = string
         })
     })
+    default     = null
 }
 
 variable "container_resource_limit" {
@@ -51,6 +56,7 @@ variable "container_resource_limit" {
         requests_cpu    = string
         requests_memory = string
     })
+    default     = null
 }
 
 variable "certificates" {
@@ -96,14 +102,12 @@ variable "configmaps" {
     default     = {}
 }
 
-variable "catalog" {
+variable "catalogs" {
     description = "Catalog to create"
-    type = object({
-        name    = string
-        url     = string
-        version = string
-    })
-    default     = null
+    type = map(object({
+        url        = string
+    }))
+    default     = {}
 }
 
 

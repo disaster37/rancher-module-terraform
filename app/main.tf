@@ -25,7 +25,6 @@ locals {
                                     username = data.vault_generic_secret.vault[0].data[value.username_key]
                                     password = data.vault_generic_secret.vault[0].data[value.password_key]
                                 }}
-    catalog_name             = var.catalog == null ? var.is_project_catalog == true ? "${local.project_small_id}:${var.catalog_name}" : var.catalog_name : "${local.project_small_id}:${rancher2_catalog.catalog[0].name}"
     values                   = var.is_substitute_values == true ? templatefile(var.values_path, local.credentials) : file(var.values_path)
 }
 
@@ -129,17 +128,6 @@ resource "rancher2_registry" "registry" {
     }
 }
 
-# Create catalog
-resource "rancher2_catalog" "catalog" {
-  count      = var.catalog == null ? 0 : 1
-  name       = var.catalog.name
-  url        = var.catalog.url
-  scope      = "project"
-  cluster_id = local.cluster_id
-  project_id = local.project_id
-  refresh    = true
-  version    = var.catalog.version
-}
 
 # Create PVC
 # Create persistant volume claim
@@ -163,18 +151,22 @@ resource "kubernetes_persistent_volume_claim" "pvc" {
 }
 
 # Create Elasticsearch with all roles
-resource "rancher2_app" "app" {
-    catalog_name     = local.catalog_name
-    name             = var.name
-    description      = var.description
-    project_id       = local.project_id
-    template_name    = var.template_name
-    template_version = var.template_version
-    target_namespace = var.namespace
-    annotations      = var.annotations
-    labels           = var.labels
-    values_yaml      = base64encode(local.values)
-    force_upgrade    = var.force_upgrade
-
-    depends_on = [rancher2_namespace.namespace]
+resource "rancher2_app_v2" "app" {
+    repo_name                   = var.repo_name
+    name                        = var.name
+    cluster_id                  = local.cluster_id
+    project_id                  = local.project_id
+    chart_name                  = var.chart_name
+    chart_version               = var.chart_version
+    namespace                   = var.namespace
+    annotations                 = var.annotations
+    labels                      = merge(var.labels,
+        {
+            description = var.description
+        }
+    )
+    values                      = local.values
+    force_upgrade               = var.force_upgrade
+    disable_open_api_validation = var.disable_open_api_validation
+    depends_on                  = [rancher2_namespace.namespace]
 }

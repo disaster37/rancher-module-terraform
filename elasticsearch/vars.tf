@@ -13,19 +13,19 @@ variable "namespace" {
     type        = string
 }
 
-variable "catalog_name" {
+variable "repo_name" {
     description = "Catalog name used to deploy elastic"
     default     = "hm"
     type        = string
 }
 
-variable "template_name" {
+variable "chart_name" {
     description = "Template name used to deploy elastic"
     default     = "elasticsearch"
     type        = string
 }
 
-variable "template_version" {
+variable "chart_version" {
     description = "Template version used to deploy elastic"
     type        = string
 }

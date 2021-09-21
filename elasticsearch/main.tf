@@ -237,18 +237,22 @@ resource "rancher2_secret" "keystore" {
 }
 
 # Create Elasticsearch with all roles
-resource "rancher2_app" "elasticsearch" {
+resource "rancher2_app_v2" "elasticsearch" {
     for_each         = var.topology
-    catalog_name     = "${local.project_small_id}:${var.catalog_name}"
+    repo_name        = var.repo_name
     name             = each.key
-    description      = each.value["description"]
+    cluster_id       = local.cluster_id
     project_id       = local.project_id
-    template_name    = var.template_name
-    template_version = var.template_version
-    target_namespace = local.namespace_name
-    values_yaml      = each.value["values"]
+    chart_name       = var.chart_name
+    chart_version    = var.chart_version
+    namespace        = local.namespace_name
+    values           = base64decode(each.value["values"])
     annotations      = var.annotations
-    labels           = var.labels
+    labels           = merge(var.labels,
+        {
+            description = each.value.description
+        }
+    )
     force_upgrade    = var.force_upgrade
     depends_on       = [rancher2_namespace.namespace, rancher2_secret.credentials, rancher2_secret.keystore, kubernetes_job.job]
 }

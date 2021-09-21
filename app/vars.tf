@@ -13,19 +13,19 @@ variable "namespace" {
     type        = string
 }
 
-variable "catalog_name" {
-    description = "Catalog name used to deploy"
+variable "repo_name" {
+    description = "Helm repository name"
     default     = ""
     type        = string
 }
 
-variable "template_name" {
-    description = "Template name used to deploy"
+variable "chart_name" {
+    description = "Chart name used to deploy"
     type        = string
 }
 
-variable "template_version" {
-    description = "Template version used to deploy"
+variable "chart_version" {
+    description = "Chart version used to deploy"
     type        = string
 }
 
@@ -122,21 +122,6 @@ variable "custom_secret_files" {
     default     = {}
 }
 
-variable "catalog" {
-    description = "Catalog to create"
-    type = object({
-        name    = string
-        url     = string
-        version = string
-    })
-    default     = null
-}
-
-variable "is_project_catalog" {
-    description = "Use project catalog, or global catalog"
-    type        = bool
-    default     = false
-}
 
 variable "is_substitute_values" {
     description = "Subsitute variable on values.yaml from credentials secrets"
@@ -168,4 +153,10 @@ variable "pvcs" {
         size          = string
     }))
     default     = {}
+}
+
+variable "disable_open_api_validation" {
+    description = "Disable open api validation when deploy with helm"
+    type        = bool
+    default     = false
 }

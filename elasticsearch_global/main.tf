@@ -24,6 +24,6 @@ resource "rancher2_catalog" "catalog" {
   cluster_id = local.cluster_id
   project_id = local.project_id
   refresh    = true
-  version    = "helm_v2"
+  version    = "helm_v3"
 }
 
