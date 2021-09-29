@@ -150,6 +150,26 @@ resource "kubernetes_persistent_volume_claim" "pvc" {
   depends_on = [rancher2_namespace.namespace]
 }
 
+# Create Network policy to allow all namespace to access on it
+resource "kubernetes_network_policy" "allow_ingress" {
+    count = var.network_policy_allow_from_all_namespace ? 1 : 0
+    metadata {
+        name      = "${var.name}-allow-ingress"
+        namespace = var.namespace
+    }
+    spec {
+        pod_selector {}
+        ingress {
+            from {
+                namespace_selector {}
+            }
+        }
+        policy_types = ["Ingress"]
+    }
+
+    depends_on = [rancher2_namespace.namespace]
+}
+
 # Create Elasticsearch with all roles
 resource "rancher2_app_v2" "app" {
     repo_name                   = var.repo_name

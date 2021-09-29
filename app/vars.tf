@@ -160,3 +160,9 @@ variable "disable_open_api_validation" {
     type        = bool
     default     = false
 }
+
+variable "network_policy_allow_from_all_namespace" {
+    description = "Allow to connect form all namespace in cluster"
+    type        = bool
+    default     = false
+}
