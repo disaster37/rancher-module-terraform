@@ -166,3 +166,20 @@ variable "network_policy_allow_from_all_namespace" {
     type        = bool
     default     = false
 }
+
+variable "services" {
+    description = "Additionnals services"
+    type        = map(object({
+        selector         = map(string)
+        session_affinity = string
+        port             = list(object({
+            name        = string
+            port        = number
+            target_port = number
+            node_port   = number
+            protocol    = string
+        }))
+        type             = string
+    }))
+    default     = {}
+}

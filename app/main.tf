@@ -170,6 +170,30 @@ resource "kubernetes_network_policy" "allow_ingress" {
     depends_on = [rancher2_namespace.namespace]
 }
 
+# Create services
+resource "kubernetes_service" "service" {
+    for_each = var.services
+    metadata {
+         name     = each.key
+        namespace = var.namespace
+    }
+    spec {
+        selector         = each.value.selector
+        session_affinity = each.value.session_affinity
+        type             = each.value.type
+        dynamic "port" {
+            for_each = each.value.port
+            content {
+                name        = port.value.name
+                port        = port.value.port
+                target_port = port.value.target_port
+                node_port   = port.value.node_port
+                protocol    = port.value.protocol
+            }
+        }
+    }
+}
+
 # Create Elasticsearch with all roles
 resource "rancher2_app_v2" "app" {
     repo_name                   = var.repo_name
