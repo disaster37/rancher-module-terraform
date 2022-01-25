@@ -59,6 +59,12 @@ variable "index_template" {
     default     = {}
 }
 
+variable "index_component_template" {
+    description = "The index component templates"
+    type        = map(string)
+    default     = {}
+}
+
 variable "snapshots_repository" {
     description = "The snapshot repositories"
     type        = map(object({

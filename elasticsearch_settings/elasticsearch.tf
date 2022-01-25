@@ -61,10 +61,17 @@ resource elasticsearch_index_lifecycle_policy "ilm" {
 ########
 # Manage index templates
 ########
+resource elasticsearch_index_component_template "ict" {
+    for_each    = var.index_component_template
+    name        = each.key
+    template    = jsondecode(jsonencode(file(each.value)))
+}
+
 resource elasticsearch_index_template "it" {
     for_each    = var.index_template
     name        = each.key
     template    = jsondecode(jsonencode(file(each.value)))
+    depends_on = [ elasticsearch_index_component_template.ict ]
 }
 
 
