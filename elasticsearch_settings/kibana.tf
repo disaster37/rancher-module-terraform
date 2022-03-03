@@ -16,6 +16,13 @@ resource kibana_role "role" {
         content {
             base   = kibana.value.base
             spaces = kibana.value.spaces
+            dynamic "features" {
+              for_each = kibana.value.features
+              content {
+                name        = features.key
+                permissions = features.value
+              }
+            }
         }
     }
     depends_on = [ kibana_user_space.us ]

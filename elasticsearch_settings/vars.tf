@@ -99,8 +99,9 @@ variable "kibana_roles" {
     description = "Kibana roles"
     type        = map(object({
         kibana  = list(object({
-            base   = list(string)
-            spaces = list(string)
+            base     = list(string)
+            spaces   = list(string)
+            features = map(list(string))
         }))     
     }))
     default = {}
