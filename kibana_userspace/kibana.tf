@@ -29,7 +29,7 @@ resource "kibana_role" "read" {
 
 # Copy object if needed
 resource kibana_copy_object "copy" {
-    for_each      = var.spaces
+    for_each      = local.copyObjects
     name          = "copy_object_${each.key}"
     source_space  = each.value.source_space
     target_spaces = [kibana_user_space.user_space[each.key].uid]
