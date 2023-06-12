@@ -188,6 +188,10 @@ resource "kubernetes_job" "job" {
       }
     }
   }
+  timeouts {
+    create = "5m"
+    update = "5m"
+  }
   
   depends_on = [kubernetes_role_binding.rb]
 }
