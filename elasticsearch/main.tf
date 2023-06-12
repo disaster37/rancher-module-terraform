@@ -171,11 +171,11 @@ resource "kubernetes_job" "job" {
             }
           }
           resources {
-            requests {
+            requests =  {
               cpu = "100m"
               memory = "128Mi"
             }
-            limits {
+            limits = {
               cpu = "100m"
               memory = "128Mi"
             }
